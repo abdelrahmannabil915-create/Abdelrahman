@@ -81,6 +81,7 @@ section{position:relative;z-index:1;padding:110px 6vw}
 /* work */
 .head{display:flex;justify-content:space-between;align-items:end;gap:24px;flex-wrap:wrap;margin-bottom:50px}
 .head h2{font-size:clamp(38px,6vw,84px)}
+#work h2{font-weight:500;text-shadow:0 0 24px rgba(125,211,252,.35),0 0 60px rgba(59,130,246,.22)}
 .head p{color:var(--muted);max-width:26em}
 .stage{position:relative;height:clamp(480px,52vw,660px);perspective:1500px;touch-action:pan-y;cursor:grab;user-select:none}
 .stage:active{cursor:grabbing}
@@ -199,7 +200,7 @@ nav a.l:hover{text-shadow:0 0 14px rgba(125,211,252,.95);box-shadow:0 0 26px rgb
 <section class="hero" id="top">
   <div>
     <div class="pills"><span class="pill">Video editor</span><span class="pill">Vertical reels</span></div><h1 aria-label="Abdelrahman Nabil"><span id="n1"></span><span id="n2"></span></h1>
-    <p>Video editor. I cut footage into stories that hold attention from the first frame to the last.</p>
+    <p>Creative Video Editor specializing in impactful cuts, cinematic storytelling, and smooth visual flow. I transform raw footage into engaging videos that deliver emotion, clarity, and a powerful message. Skilled in rhythm, color, pacing, and crafting visuals that keep viewers watching.</p>
     <div class="acts"><a class="btn p mag" href="#work">Watch my work</a><a class="btn g mag" href="#contact">Hire me</a></div>
   </div>
   <a class="badge glass" href="#work" aria-label="Watch my work"><svg viewBox="0 0 120 120"><defs><path id="cp" d="M60,60 m-44,0 a44,44 0 1,1 88,0 a44,44 0 1,1 -88,0"/></defs><text><textPath href="#cp" textLength="272">WATCH MY WORK ✦ WATCH MY WORK ✦ </textPath></text></svg><span>▶</span></a>
@@ -209,7 +210,7 @@ nav a.l:hover{text-shadow:0 0 14px rgba(125,211,252,.95);box-shadow:0 0 26px rgb
 <div class="mq" aria-hidden="true"><div id="mq"></div></div>
 
 <section id="work">
-  <div class="head rv"><h2>Selected work</h2><p id="workhint">Drag, swipe, or use the arrows. Click a video to play it full screen.</p></div>
+  <div class="head rv"><h2>Showreel</h2><p id="workhint">Drag, swipe, or use the arrows. Click a video to play it full screen.</p></div>
   <div class="stage rv" id="stage"></div>
   <div class="ctl rv"><button class="ar glass" id="prev" aria-label="Previous video">←</button><div class="count" id="count"></div><div class="dots" id="dots"></div><button class="ar glass" id="next" aria-label="Next video">→</button></div>
 </section>
@@ -267,7 +268,7 @@ const DESK=()=>matchMedia("(hover:hover) and (pointer:fine)").matches;
 function posterOf(v){if(v.poster)return v.poster;const m=v.src&&v.src.match(/^(https:\/\/res\.cloudinary\.com\/[^/]+\/video\/upload\/)(.+)\.[a-z0-9]+$/i);return m?m[1]+"so_0,w_600,q_auto/"+m[2]+".jpg":""}
 const slides=VIDEOS.map((v,k)=>{const s=document.createElement("div");s.className="slide glass";
  s.innerHTML=(v.src?`<video src="${v.src}" ${posterOf(v)?`poster="${posterOf(v)}"`:""} muted loop playsinline preload="none" disablepictureinpicture controlslist="nodownload noremoteplayback" oncontextmenu="return false"></video>`:`<div class="poster" style="--h:${v.yt?"0deg":v.h};background-image:${v.poster?`url(${v.poster})`:v.yt?`url(https://img.youtube.com/vi/${v.yt}/hqdefault.jpg)`:"var(--bg2)"}"></div>`)+`<div class="cap glass"><div><h3>${v.title}</h3><small>${v.tag}</small></div><span class="play"></span></div>`;
- s.onclick=()=>{if(moved)return;go(k);if(DESK())openLb(v)};stage.appendChild(s);return s});
+ s.onclick=()=>{if(moved)return;go(k);openLb(v)};stage.appendChild(s);return s});
 $("#dots").innerHTML=VIDEOS.map((_,k)=>`<button aria-label="Video ${k+1}"></button>`).join("");
 const dots=[...$("#dots").children];dots.forEach((d,k)=>d.onclick=()=>go(k));
 function layout(){slides.forEach((s,k)=>{const d=k-i,a=Math.abs(d);
@@ -281,7 +282,7 @@ addEventListener("keydown",e=>{if(e.key==="ArrowLeft")go(i-1);if(e.key==="ArrowR
 let sx=null;stage.addEventListener("pointerdown",e=>{sx=e.clientX;moved=false});
 addEventListener("pointerup",e=>{if(sx===null)return;const d=e.clientX-sx;sx=null;if(Math.abs(d)>50){moved=true;go(i+(d<0?1:-1));setTimeout(()=>moved=false,50)}});
 layout();
-if(!DESK()){$("#workhint").textContent="Swipe or use the arrows. Videos play automatically.";document.querySelectorAll(".play").forEach(e=>e.style.display="none")}
+if(!DESK()){$("#workhint").textContent="Swipe or use the arrows. Tap a video to play it full screen."}
 /* lightbox */
 function openLb(v){$("#lbBox").innerHTML=v.src?`<video src="${v.src}" poster="${posterOf(v)}" controls controlslist="nodownload noremoteplayback" disablepictureinpicture playsinline oncontextmenu="return false"></video>`:v.yt?`<iframe src="https://www.youtube.com/embed/${v.yt}?autoplay=1&rel=0&playsinline=1" allow="autoplay; fullscreen" allowfullscreen style="position:absolute;inset:0;width:100%;height:100%;border:0"></iframe>`:`<div><h3 style="font-size:32px">${v.title}</h3><p style="color:var(--muted);margin-top:10px">Your video will play here.</p></div>`;$("#lb").classList.add("on");const lv=$("#lbBox video");if(lv){const pl=lv.play();if(pl)pl.catch(()=>{lv.muted=true;lv.play().catch(()=>{})})}}
 function closeLb(){$("#lb").classList.remove("on");$("#lbBox").innerHTML=""}
