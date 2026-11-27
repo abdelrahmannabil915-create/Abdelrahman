@@ -183,12 +183,6 @@ nav a.l:hover{text-shadow:0 0 14px rgba(125,211,252,.95);box-shadow:0 0 26px rgb
 @media(max-width:900px){.hero,.about{grid-template-columns:1fr}.hero{padding-top:120px}nav b{display:none}nav{padding-left:10px}nav a.l{padding:9px 10px}}
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}.hero h1 i,.hero p,.hero .acts,.stage3d,.rv{opacity:1;transform:none;filter:none}}
 
-/* ===== BLACK BACKGROUND ONLY ===== */
-:root{--night:#030303}
-.b1{filter:grayscale(1) brightness(.3) contrast(1.1)}
-.b2{filter:grayscale(1);opacity:.12}
-.ribs{background:repeating-linear-gradient(90deg,rgba(255,255,255,.035) 0 2px,transparent 2px 38px),radial-gradient(ellipse at 50% 40%,transparent 25%,rgba(0,0,0,.9) 100%)}
-.o1{background:#2a2a2a}.o2{background:#1f1f1f}
 </style>
 </head>
 <body>
@@ -215,7 +209,7 @@ nav a.l:hover{text-shadow:0 0 14px rgba(125,211,252,.95);box-shadow:0 0 26px rgb
 <div class="mq" aria-hidden="true"><div id="mq"></div></div>
 
 <section id="work">
-  <div class="head rv"><h2>Selected work</h2><p>Drag, swipe, or use the arrows. Click the center video to play it full screen.</p></div>
+  <div class="head rv"><h2>Selected work</h2><p id="workhint">Drag, swipe, or use the arrows. Click a video to play it full screen.</p></div>
   <div class="stage rv" id="stage"></div>
   <div class="ctl rv"><button class="ar glass" id="prev" aria-label="Previous video">←</button><div class="count" id="count"></div><div class="dots" id="dots"></div><button class="ar glass" id="next" aria-label="Next video">→</button></div>
 </section>
@@ -268,9 +262,12 @@ addEventListener("pointermove",e=>{tx=e.clientX;ty=e.clientY;root.style.setPrope
 document.querySelectorAll(".mag").forEach(b=>{b.addEventListener("pointermove",e=>{const r=b.getBoundingClientRect();b.style.transform=`translate(${(e.clientX-r.left-r.width/2)*.25}px,${(e.clientY-r.top-r.height/2)*.35}px)`});b.addEventListener("pointerleave",()=>b.style.transform="")});
 /* slider */
 const stage=$("#stage");let i=Math.floor(VIDEOS.length/2),moved=false;
+const DESK=()=>matchMedia("(hover:hover) and (pointer:fine)").matches;
+/* poster: uses v.poster if set, else a Cloudinary frame made from the same video URL (video URLs unchanged) */
+function posterOf(v){if(v.poster)return v.poster;const m=v.src&&v.src.match(/^(https:\/\/res\.cloudinary\.com\/[^/]+\/video\/upload\/)(.+)\.[a-z0-9]+$/i);return m?m[1]+"so_0,w_600,q_auto/"+m[2]+".jpg":""}
 const slides=VIDEOS.map((v,k)=>{const s=document.createElement("div");s.className="slide glass";
- s.innerHTML=(v.src?`<video src="${v.src}" ${v.poster?`poster="${v.poster}"`:""} muted loop playsinline preload="metadata"></video>`:`<div class="poster" style="--h:${v.yt?"0deg":v.h};background-image:${v.poster?`url(${v.poster})`:v.yt?`url(https://img.youtube.com/vi/${v.yt}/hqdefault.jpg)`:"var(--bg2)"}"></div>`)+`<div class="cap glass"><div><h3>${v.title}</h3><small>${v.tag}</small></div><span class="play"></span></div>`;
- s.onclick=()=>{if(moved)return;k===i?openLb(v):go(k)};stage.appendChild(s);return s});
+ s.innerHTML=(v.src?`<video src="${v.src}" ${posterOf(v)?`poster="${posterOf(v)}"`:""} muted loop playsinline preload="none" disablepictureinpicture controlslist="nodownload noremoteplayback" oncontextmenu="return false"></video>`:`<div class="poster" style="--h:${v.yt?"0deg":v.h};background-image:${v.poster?`url(${v.poster})`:v.yt?`url(https://img.youtube.com/vi/${v.yt}/hqdefault.jpg)`:"var(--bg2)"}"></div>`)+`<div class="cap glass"><div><h3>${v.title}</h3><small>${v.tag}</small></div><span class="play"></span></div>`;
+ s.onclick=()=>{if(moved)return;go(k);if(DESK())openLb(v)};stage.appendChild(s);return s});
 $("#dots").innerHTML=VIDEOS.map((_,k)=>`<button aria-label="Video ${k+1}"></button>`).join("");
 const dots=[...$("#dots").children];dots.forEach((d,k)=>d.onclick=()=>go(k));
 function layout(){slides.forEach((s,k)=>{const d=k-i,a=Math.abs(d);
@@ -284,8 +281,9 @@ addEventListener("keydown",e=>{if(e.key==="ArrowLeft")go(i-1);if(e.key==="ArrowR
 let sx=null;stage.addEventListener("pointerdown",e=>{sx=e.clientX;moved=false});
 addEventListener("pointerup",e=>{if(sx===null)return;const d=e.clientX-sx;sx=null;if(Math.abs(d)>50){moved=true;go(i+(d<0?1:-1));setTimeout(()=>moved=false,50)}});
 layout();
+if(!DESK()){$("#workhint").textContent="Swipe or use the arrows. Videos play automatically.";document.querySelectorAll(".play").forEach(e=>e.style.display="none")}
 /* lightbox */
-function openLb(v){$("#lbBox").innerHTML=v.src?`<video src="${v.src}" controls autoplay playsinline></video>`:v.yt?`<iframe src="https://www.youtube.com/embed/${v.yt}?autoplay=1&rel=0&playsinline=1" allow="autoplay; fullscreen" allowfullscreen style="position:absolute;inset:0;width:100%;height:100%;border:0"></iframe>`:`<div><h3 style="font-size:32px">${v.title}</h3><p style="color:var(--muted);margin-top:10px">Your video will play here.</p></div>`;$("#lb").classList.add("on")}
+function openLb(v){$("#lbBox").innerHTML=v.src?`<video src="${v.src}" poster="${posterOf(v)}" controls controlslist="nodownload noremoteplayback" disablepictureinpicture playsinline oncontextmenu="return false"></video>`:v.yt?`<iframe src="https://www.youtube.com/embed/${v.yt}?autoplay=1&rel=0&playsinline=1" allow="autoplay; fullscreen" allowfullscreen style="position:absolute;inset:0;width:100%;height:100%;border:0"></iframe>`:`<div><h3 style="font-size:32px">${v.title}</h3><p style="color:var(--muted);margin-top:10px">Your video will play here.</p></div>`;$("#lb").classList.add("on");const lv=$("#lbBox video");if(lv){const pl=lv.play();if(pl)pl.catch(()=>{lv.muted=true;lv.play().catch(()=>{})})}}
 function closeLb(){$("#lb").classList.remove("on");$("#lbBox").innerHTML=""}
 $("#lbx").onclick=closeLb;$("#lb").onclick=e=>{if(e.target.id==="lb")closeLb()};
 /* portrait */
