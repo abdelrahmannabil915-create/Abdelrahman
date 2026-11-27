@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Abdelrahman Nabil — Video Editor</title>
 <meta name="description" content="Abdelrahman Nabil is a video editor specializing in vertical reels, ads, color grading and motion graphics. View the portfolio and get in touch.">
-<meta property="og:title" content="Abdelrahman Nabil — Video Editor"><meta property="og:description" content="Vertical reels, ads, color grading and motion graphics."><meta property="og:type" content="website"><meta name="theme-color" content="#020817">
+<meta property="og:title" content="Abdelrahman Nabil — Video Editor"><meta property="og:description" content="Vertical reels, ads, color grading and motion graphics."><meta property="og:type" content="website"><meta name="theme-color" content="#030303">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
@@ -182,6 +182,13 @@ nav a.l:hover{text-shadow:0 0 14px rgba(125,211,252,.95);box-shadow:0 0 26px rgb
 .rv.in{opacity:1;filter:none;transform:none}
 @media(max-width:900px){.hero,.about{grid-template-columns:1fr}.hero{padding-top:120px}nav b{display:none}nav{padding-left:10px}nav a.l{padding:9px 10px}}
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}.hero h1 i,.hero p,.hero .acts,.stage3d,.rv{opacity:1;transform:none;filter:none}}
+
+/* ===== BLACK BACKGROUND ONLY ===== */
+:root{--night:#030303}
+.b1{filter:grayscale(1) brightness(.3) contrast(1.1)}
+.b2{filter:grayscale(1);opacity:.12}
+.ribs{background:repeating-linear-gradient(90deg,rgba(255,255,255,.035) 0 2px,transparent 2px 38px),radial-gradient(ellipse at 50% 40%,transparent 25%,rgba(0,0,0,.9) 100%)}
+.o1{background:#2a2a2a}.o2{background:#1f1f1f}
 </style>
 </head>
 <body>
@@ -241,11 +248,9 @@ nav a.l:hover{text-shadow:0 0 14px rgba(125,211,252,.95);box-shadow:0 0 26px rgb
 <script>
 /* ===== Add your videos here: set src to the video file link, and poster to a cover image link (optional) ===== */
 const VIDEOS=[
- {title:"Brand commercial",tag:"Ad · 0:45",src:"",poster:"",h:"0deg"},
- {title:"Short-form reel",tag:"Reel · 0:30",src:"",poster:"",h:"10deg"},
- {title:"Music video",tag:"Music · 3:10",src:"",poster:"",h:"-10deg"},
- {title:"Documentary cut",tag:"Story · 2:20",src:"",poster:"",h:"18deg"},
- {title:"Social campaign",tag:"Social · 0:20",src:"",poster:"",h:"-18deg"}
+ {title:"Video 1",tag:"Reel",src:"https://res.cloudinary.com/dq58z4q9k/video/upload/v1770729714/%D9%83%D8%A7%D9%85%D9%84_1_xuu8x4.mp4",poster:"",h:"0deg"},
+ {title:"Video 2",tag:"Reel",src:"https://res.cloudinary.com/dq58z4q9k/video/upload/v1771431592/v7_jgvnly.mp4",poster:"",h:"10deg"},
+ {title:"Video 3",tag:"Reel",src:"https://res.cloudinary.com/dq58z4q9k/video/upload/v1770759129/v1_fu_hgsh_k_hfxgca.mp4",poster:"",h:"-10deg"}
 ];
 const $=s=>document.querySelector(s),root=document.documentElement;
 const reduce=matchMedia('(prefers-reduced-motion:reduce)').matches;
